@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-app-service
+spec:
+  type: NodePort
+  selector:
+    app: example-app
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-app-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example-app
+  template:
+    metadata:
+      labels:
+        app: example-app
+    spec:
+      containers:
+      - name: example-app-container
+        image: DOCKER_REGISTRY/example-app-image
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
