@@ -1,9 +1,8 @@
 pipeline {
     agent any
         environment {
-            DOCKER_REGISTRY = 'DOCKER_REGISTRY_URL'
+            DOCKER_REGISTRY = 'nmelehan'
             LINODE_S3_BUCKET = 'jenkins-artifact-bucket'
-            SLACK_CHANNEL = '#jenkins-cicd-testing'
         }
 
         stages {
@@ -15,10 +14,10 @@ pipeline {
 
                 post {
                     success {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Build complete!')
+                        echo 'Build complete!'
                     }
                     failure {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Build has failed. See the logs for details.')
+                        echo 'Build has failed. See the logs for details.'
                     }
                 }
             }
@@ -53,10 +52,10 @@ pipeline {
 
                 post {
                     success {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Testing passed!')
+                        echo 'Testing passed!'
                     }
                     failure {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Testing has failed. See the logs for details.')
+                        echo 'Testing has failed. See the logs for details.'
                     }
                     cleanup {
                         sh 'docker ps -aq | xargs docker stop | xargs docker rm'
@@ -72,7 +71,7 @@ pipeline {
                 post {
                     always {
                         recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'eslint.xml')
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Code analysis conducted! Review the logs for results.')
+                        echo 'Code analysis conducted! Review the logs for results.'
                     }
                 }
             }
@@ -85,10 +84,10 @@ pipeline {
 
                 post {
                     success {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Artifacts stored!')
+                        echo 'Artifacts stored!'
                     }
                     failure {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Packaging has failed. See the logs for details.')
+                        echo 'Packaging has failed. See the logs for details.'
                     }
                     cleanup {
                         sh 'rm example-app-image.tar'
@@ -111,10 +110,10 @@ pipeline {
 
                 post {
                     success {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Deployment done!')
+                        echo 'Deployment done!'
                     }
                     failure {
-                        slackSend(channel: "${SLACK_CHANNEL}", message: 'Deployment has failed. See the logs for details.')
+                        echo 'Deployment has failed. See the logs for details.'
                     }
                 }
             }
