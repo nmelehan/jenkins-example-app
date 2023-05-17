@@ -98,10 +98,10 @@ pipeline {
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-example-docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh 'docker login https://index.docker.io/v2 -u $USERNAME -p $PASSWORD'
+                        sh 'docker push $DOCKER_REGISTRY/example-app-image:latest'
                     }
 
                     withKubeConfig([credentialsId: 'jenkins-example-lke']) {
-                        sh 'docker push $DOCKER_REGISTRY/example-app-image:latest'
                         sh 'sed -i "s;DOCKER_REGISTRY;$DOCKER_REGISTRY;" example-app-kube.yml'
                         sh 'kubectl apply -f example-app-kube.yml'
                     }
