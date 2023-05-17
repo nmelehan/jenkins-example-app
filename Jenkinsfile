@@ -79,7 +79,6 @@ pipeline {
             stage('Package') {
                 steps {
                     sh 'docker save $DOCKER_REGISTRY/example-app-image:latest > example-app-image.tar'
-                    sh 'rclone copyto example-app-image.tar linodes3:$LINODE_S3_BUCKET/artifacts/example-app-image-$(date +%Y%m%d-%H%M%S).tar --config=/opt/rclone/rclone.conf'
                 }
 
                 post {
