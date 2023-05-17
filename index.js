@@ -9,7 +9,7 @@ const generateMessage = (recipientName) => {
     recipientName = 'World'
   }
 
-  return { message: 'Howdy, ' + recipientName + '!' }
+  return { message: 'Hello, ' + recipientName + '!' }
 }
 
 app.get('/', (req, res) => {
