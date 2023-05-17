@@ -97,13 +97,11 @@ pipeline {
             stage('Deploy') {
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-example-docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh script: '''\
-                        docker login $DOCKER_REGISTRY_URL -u $USERNAME -p $PASSWORD && \
-                        docker push $DOCKER_REGISTRY/example-app-image:latest \
-                        '''
+                        sh 'docker login $DOCKER_REGISTRY_URL -u $USERNAME -p $PASSWORD'
                     }
 
                     withKubeConfig([credentialsId: 'jenkins-example-lke']) {
+                        sh 'docker push $DOCKER_REGISTRY/example-app-image:latest'
                         sh 'sed -i "s;DOCKER_REGISTRY;$DOCKER_REGISTRY;" example-app-kube.yml'
                         sh 'kubectl apply -f example-app-kube.yml'
                     }
