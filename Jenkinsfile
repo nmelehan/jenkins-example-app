@@ -1,14 +1,15 @@
 pipeline {
     agent any
         environment {
-            DOCKER_REGISTRY = 'nmelehan'
+            DOCKER_REGISTRY_USERNAME = 'nmelehan'
+            DOCKER_REGISTRY_URL = ''
             LINODE_S3_BUCKET = 'jenkins-artifact-bucket'
         }
 
         stages {
             stage('Build') {
                 steps {
-                    sh 'docker build -t $DOCKER_REGISTRY/example-app-image .'
+                    sh 'docker build -t $DOCKER_REGISTRY_USERNAME/example-app-image .'
 		    sh 'npm install'
                 }
 
@@ -31,7 +32,7 @@ pipeline {
                 }
 
                 steps {
-                    sh 'docker run -d -p 3000:3000 $DOCKER_REGISTRY/example-app-image'
+                    sh 'docker run -d -p 3000:3000 $DOCKER_REGISTRY_USERNAME/example-app-image'
                     sh 'sleep 5'
 
                     sh '''#!/bin/bash
@@ -78,7 +79,7 @@ pipeline {
 
             stage('Package') {
                 steps {
-                    sh 'docker save $DOCKER_REGISTRY/example-app-image:latest > example-app-image.tar'
+                    sh 'docker save $DOCKER_REGISTRY_USERNAME/example-app-image:latest > example-app-image.tar'
                     sh 'rclone copyto example-app-image.tar linodes3:$LINODE_S3_BUCKET/artifacts/example-app-image-$(date +%Y%m%d-%H%M%S).tar --config=/opt/rclone/rclone.conf'
                 }
 
@@ -102,8 +103,8 @@ pipeline {
                     }
 
                     withKubeConfig([credentialsId: 'jenkins-example-lke']) {
-                        sh 'docker push $DOCKER_REGISTRY/example-app-image:latest'
-                        sh 'sed -i "s;DOCKER_REGISTRY;$DOCKER_REGISTRY;" example-app-kube.yml'
+                        sh 'docker push $DOCKER_REGISTRY_USERNAME/example-app-image:latest'
+                        sh 'sed -i "s;DOCKER_REGISTRY_USERNAME;$DOCKER_REGISTRY_USERNAME;" example-app-kube.yml'
                         sh 'kubectl apply -f example-app-kube.yml'
                     }
                 }

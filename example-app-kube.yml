@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: example-app-container
-        image: DOCKER_REGISTRY/example-app-image
+        image: DOCKER_REGISTRY_USERNAME/example-app-image
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
