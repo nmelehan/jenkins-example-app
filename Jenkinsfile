@@ -97,7 +97,7 @@ pipeline {
             stage('Deploy') {
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-example-docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh 'docker login $DOCKER_REGISTRY -u $USERNAME -p $PASSWORD'
+                        sh 'docker login https://index.docker.io/v2 -u $USERNAME -p $PASSWORD'
                     }
 
                     withKubeConfig([credentialsId: 'jenkins-example-lke']) {
