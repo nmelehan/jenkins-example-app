@@ -98,7 +98,7 @@ pipeline {
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'jenkins-example-docker', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh script: '''\
-                        docker login https://index.docker.io/v2 -u $USERNAME -p $PASSWORD \
+                        docker login https://index.docker.io/v2 -u $USERNAME -p $PASSWORD && \
                         docker push $DOCKER_REGISTRY/example-app-image:latest \
                         '''
                     }
